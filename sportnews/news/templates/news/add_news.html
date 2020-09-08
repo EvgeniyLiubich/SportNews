@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sidebar %}
+
+{% block title %} Добавить новость : {{ block.super }}  {% endblock %}
+
+{% block content %}
+<section class="single-blog-area">
+            <div class="container">
+                <div class="row">
+                   <div class="col-md-12">
+                    <div class="border-top">
+                        <div class="col-md-8">
+                        <div class="blog-area">
+                            <div class="blog-area-part">
+                                <h2>Добавить новость</h2>
+                                <div class="single-content">
+                                    <div>
+                                        <form enctype="multipart/form-data"
+ action="{% url 'add_news'	%}" method="post">
+                                            {% csrf_token %}
+                                            {{ form.as_p }}
+                                           <button type="submit" class="btn btn-primary btn-lg btn-block">Добавить новость</button>
+                                        </form>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+{% endblock %}
