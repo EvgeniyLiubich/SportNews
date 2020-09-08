@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from news.models import News, Comment
+from news.models import News, Comment, Profile
 
 
 class UserRegisterForm(UserCreationForm):
@@ -74,3 +74,17 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={"class": "form-control", "rows": 5}),
         }
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['user', 'location', 'birth_date', ]
+        # exclude = ['id_user']
+

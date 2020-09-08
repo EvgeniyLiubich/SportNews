@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sidebar %}
+
+{% block title %} Авторизация : {{ block.super }}  {% endblock %}
+
+{% block content %}
+<!--<form method="post">-->
+<!--  {% csrf_token %}-->
+<!--  {{ user_form.as_p }}-->
+<!--  {{ profile_form.as_p }}-->
+<!--  <button type="submit">Save changes</button>-->
+<!--</form>-->
+<section class="single-blog-area">
+            <div class="container">
+                <div class="row">
+                   <div class="col-md-12">
+                    <div class="border-top">
+                        <div class="col-md-8">
+                        <div class="blog-area">
+                            <div class="blog-area-part">
+                                <h2>Редактировать профиль</h2>
+                                <div class="single-content">
+                                    <div>
+                                        <form  method="post">
+                                            {% csrf_token %}
+                                            {{ user_form.as_p }}
+                                            {{ profile_form.as_p }}
+                                           <button type="submit" class="btn btn-primary btn-lg btn-block">Сохранить изменения</button>
+                                        </form>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+{% endblock %}

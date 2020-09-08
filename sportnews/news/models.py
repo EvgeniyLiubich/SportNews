@@ -1,9 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Category(models.Model):
+    """Модель категорий"""
     title = models.CharField(max_length=150, db_index=True, verbose_name='Наименование категории')
     slug = models.SlugField(max_length=150, verbose_name='Url', unique=True)
 
@@ -20,6 +23,7 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
+    """Модель тегов"""
     title = models.CharField(max_length=50, db_index=True, verbose_name='Тег')
     slug = models.SlugField(max_length=50, verbose_name='Url', unique=True)
 
@@ -36,6 +40,7 @@ class Tag(models.Model):
 
 
 class News(models.Model):
+    """Модель новостей"""
     title = models.CharField(max_length=255, verbose_name='Заголовок')
     slug = models.SlugField(max_length=255, verbose_name='Url', unique=True, blank=True)
     content = models.TextField(blank=True, verbose_name='Контент')
@@ -61,6 +66,7 @@ class News(models.Model):
 
 
 class Comment(models.Model):
+    """Модель комментариев"""
     news = models.ForeignKey(News, on_delete=models.CASCADE, verbose_name='Статья', blank=True, null=True,
                              related_name='comments_news')
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария')
@@ -72,3 +78,22 @@ class Comment(models.Model):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ['-created_at']
+
+
+class Profile(models.Model):
+    """Модель данных User"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    bio = models.TextField(max_length=500, blank=True, verbose_name='О себе')
+    location = models.CharField(max_length=30, blank=True, verbose_name='Местоположение')
+    birth_date = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

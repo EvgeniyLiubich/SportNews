@@ -12,4 +12,5 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
     path('add_news/', CreateNews.as_view(), name='add_news'),
     path('send_email/', send_email, name='send_email'),
+    path('profile/', update_profile, name='update_profile'),
 ]
