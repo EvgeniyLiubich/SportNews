@@ -55,3 +55,5 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.site_title = 'Управление SportNews'
+admin.site.site_header = 'Управление SportNews'

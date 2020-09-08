@@ -1,0 +1,8 @@
+#header,
+.module h2, .module caption, .inline-group h2{
+    background: #1b5e20;
+}
+
+div.breadcrumbs{
+    background: #37474f;
+}
