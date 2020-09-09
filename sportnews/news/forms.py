@@ -85,6 +85,6 @@ class UserForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['user', 'location', 'birth_date', ]
-        # exclude = ['id_user']
+        fields = ['location', 'birth_date', ]
+
 

@@ -19,6 +19,14 @@
                                        <form method="post">
                                             {% csrf_token %}
                                             {{ form.as_p }}
+                                           <a href="/login/vk-oauth2"><img src="/static/auth-vk.png" class="avatar-3" data-toggle="tooltip" title="Авторизация VK"></a>
+
+                                           <br><br>
+                                           <a href="{% url 'social:begin' 'google-oauth2' %}"><img  src="/static/loging.png" class="avatar-3" data-toggle="tooltip" title="Авторизация Google"></a>
+                                           <br><br>
+<!--                                           <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/fb_login_default.png" class="avatar-3" data-toggle="tooltip" title="Авторизация Facebook"></a>-->
+                                           <br><br>
+
                                            <button type="submit" class="btn btn-primary btn-lg btn-block">Войти</button>
                                         </form>
                                 </div>

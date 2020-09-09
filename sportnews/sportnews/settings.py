@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'bootstrap4',
     'captcha',
+
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
             ],
         },
     },
@@ -215,3 +218,24 @@ CAPTCHA_LETTER_ROTATION = None
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
 CAPTCHA_NOISE_FUNCTIONS = False
 
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7591058'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'nsRbWy3CUMW8I9q8oLWr'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '949051399476-enpd3sujv72gt4geo2mnuc63huk1577p.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '8oKKz5tAkiGRGcRWXAjtlKBm'
+
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.vk.VKOAuth2',  # бекенд авторизации через ВКонтакте
+    'django.contrib.auth.backends.ModelBackend',
+# бекенд классической аутентификации, чтобы работала авторизация через обычный логин и пароль
+)
+
+LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+
+SOCIAL_AUTH_FACEBOOK_KEY = '383825429278851'
+SOCIAL_AUTH_FACEBOOK_SECRET = '14f7979206f7499a79b6e3142cbad966'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+# SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
