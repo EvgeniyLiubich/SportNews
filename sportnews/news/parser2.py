@@ -32,13 +32,12 @@ headers = [{'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:47.0) Gecko/20100101 
             'Accept': 'text/html, application/xhtml+xml, application/xml;q=0.9,*/*;q=0.8'}
            ]
 
-
+"""Для TUT.BY"""
 start = datetime.now()
 url_list = [
-    ('https://www.sports.ru/tennis/', Category.objects.get(pk=3)),
-    ('https://www.sports.ru/hockey/', Category.objects.get(pk=2)),
-    ('https://www.sports.ru/football/', Category.objects.get(pk=1)),
-    ('https://www.sports.ru/boxing/', Category.objects.get(pk=4)),
+    ('https://sport.tut.by/rubric/tennis/', Category.objects.get(pk=3)),
+    ('https://sport.tut.by/rubric/hockey/', Category.objects.get(pk=2)),
+    ('https://sport.tut.by/rubric/football/', Category.objects.get(pk=1)),
 ]
 data = []
 for link in url_list:
@@ -46,70 +45,39 @@ for link in url_list:
     # print(resp)
     if resp.status_code == 200:
         soup = BS(resp.content, 'html.parser')
-        items = soup.find_all('article',
-                              class_='js-active js-material-list__blogpost material-list__item clearfix piwikTrackContent piwikContentIgnoreInteraction')
+        items = soup.find_all('div',
+                              class_='news-entry big annoticed time ni')
 
-    data = []
     for item in items:
         news = {}
         href = item.find('a')['href']
-        photo = item.find('img', class_='material-list__item-img lazyload').get('data-src')
-        path = os.path.join(BASE_DIR, 'media') + '\\' + basename(photo)
-        with open(path, "wb") as f:
-            f.write(requests.get(photo).content)
-        news['photo'] = basename(photo)
         news['category'] = link[1]
-        # print(news['category'])
         resp = requests.get(href, headers[randint(0, 2)])
         if resp.status_code == 200:
             soup = BS(resp.content, 'html.parser')
-            item = soup.find('div', class_='blog-post')
+            item = soup.find('div', class_='col-w')
             if item:
                 title = item.find('h1', itemprop="headline").text
                 news['title'] = title
                 news['slug'] = from_cyrillic_to_eng(title)[:30]
-                # print(news['slug'])
+                div_cont = item.find('div', id="article_body")
                 content = ''
-                cont = item.find_all('p')
+                cont = div_cont.find_all('p')
                 for i in cont:
-                    if i.text.startswith('Вы подписаны'):
-                        pass
-                    elif i.text.endswith('Подписаться'):
-                        pass
-                    else:
-                        content += i.text
+                    content += i.text
                 news['content'] = content
-                taggs = soup.find('div', class_='material-item__tags-line')
-                if taggs:
-                    news['tags'] = []
-                    tag_list = taggs.find_all('a')
-                    for item in tag_list:
-                        # print(item.text)
-                        tag = {}
-                        tag['title'] = item.text
-                        tag['slug'] = from_cyrillic_to_eng(tag['title'])
-                        # print(tag)
-                        tag_item = Tag(**tag)
-                        if Tag.objects.filter(title=tag_item.title):
-                            pass
-                            # print('Tag exist')
-                        else:
-                            tag_item.save()
-                            # print('Tag save')
-                        teg_1 = Tag.objects.get(title=tag_item.title)
-                        news['tags'].append(teg_1.id)
-                        # print(qwe.id, qwe.title)
-
-                        # news['tags'] = Tag.objects.get(title=tag_item.title)
-                # print(news['tags'])
-                # print('---------------')
-
-
+                # photo_div = div_cont.find('figure', class_="image-captioned")
+                try:
+                    photo = div_cont.find('img').get('src')
+                    path = os.path.join(BASE_DIR, 'media') + '\\' + basename(photo)
+                    with open(path, "wb") as f:
+                        f.write(requests.get(photo).content)
+                    news['photo'] = basename(photo)
+                except AttributeError:
+                    pass
         data.append(news)
-#
+
 shuffle(data)
-# tag = Tag.objects.get(id=10)
-# print(type(tag))
 
 
 for news in data:
@@ -124,23 +92,6 @@ for news in data:
             print('News save', news.category)
         except DatabaseError:
             print('Error')
-    news2 = News.objects.get(title=news.title)
-    for item in tag:
-        obj = Tag.objects.get(id=item)
-        news2.tags.add(obj )
-        news2.save()
-        print('Tag Ok')
-#
-# print(datetime.now() - start)
 
-# news = News.objects.get(id=84)
-# tag = Tag.objects.get(id=10)
-# print(type(tag))
-# # print(news.tags)
-# print(news.tags.all())
-# # for i in news.tags.all():
-# #     print(i)
-# news.tags.add(tag)
-# news.save()
-# for i in news.tags.all():
-#     print(i)
+
+print(datetime.now() - start)

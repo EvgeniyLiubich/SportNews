@@ -81,7 +81,7 @@ class Comment(models.Model):
 
 
 class Profile(models.Model):
-    """Модель данных User"""
+    """Модель профиля User"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     bio = models.TextField(max_length=500, blank=True, verbose_name='О себе')
     location = models.CharField(max_length=30, blank=True, verbose_name='Местоположение')
@@ -97,4 +97,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
