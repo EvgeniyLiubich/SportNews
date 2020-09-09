@@ -12,7 +12,6 @@ from news.utils import from_cyrillic_to_eng
 from sportnews.settings import BASE_DIR
 
 proj = os.path.dirname(os.path.abspath('manage.py'))
-# print(proj)
 sys.path.append(proj)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'sportnews.settings'
 
@@ -31,13 +30,18 @@ headers = [{'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:47.0) Gecko/20100101 
             'Accept': 'text/html, application/xhtml+xml, application/xml;q=0.9,*/*;q=0.8'}
            ]
 
+"""Для SPORTS.RU"""
+
 start = datetime.now()
-url_list = [
-    ('https://www.sports.ru/tennis/', Category.objects.get(pk=3)),
-    ('https://www.sports.ru/hockey/', Category.objects.get(pk=2)),
-    ('https://www.sports.ru/football/', Category.objects.get(pk=1)),
-    ('https://www.sports.ru/boxing/', Category.objects.get(pk=4)),
-]
+
+url_list = []
+qs = Category.objects.all()
+for item in qs:
+    if item.pars_url_sports:
+        url = Category.objects.get(pk=item.pk).pars_url_sports
+        cat = Category.objects.get(pk=item.pk)
+        url_list.append((url, cat))
+
 data = []
 for link in url_list:
     resp = requests.get(link[0], headers[randint(0, 2)])
@@ -47,7 +51,6 @@ for link in url_list:
         items = soup.find_all('article',
                               class_='js-active js-material-list__blogpost material-list__item clearfix piwikTrackContent piwikContentIgnoreInteraction')
 
-    # data = []
     for item in items:
         news = {}
         href = item.find('a')['href']
@@ -65,8 +68,7 @@ for link in url_list:
             if item:
                 title = item.find('h1', itemprop="headline").text
                 news['title'] = title
-                news['slug'] = from_cyrillic_to_eng(title)[:30]
-                print(news['slug'])
+                news['slug'] = from_cyrillic_to_eng(title)[:50]
                 content = ''
                 cont = item.find_all('p')
                 for i in cont:

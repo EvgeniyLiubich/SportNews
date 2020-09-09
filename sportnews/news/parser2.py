@@ -4,7 +4,6 @@ from random import randint, shuffle
 import requests
 from bs4 import BeautifulSoup as BS
 
-
 from django.db import DatabaseError
 
 import os, sys
@@ -21,7 +20,7 @@ import django
 
 django.setup()
 
-from news.models import News, Category,Tag
+from news.models import News, Category, Tag
 
 headers = [{'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:47.0) Gecko/20100101 Firefox/47.0',
             'Accept': 'text/html, application/xhtml+xml, application/xml;q=0.9,*/*;q=0.8'},
@@ -34,15 +33,17 @@ headers = [{'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:47.0) Gecko/20100101 
 
 """Для TUT.BY"""
 start = datetime.now()
-url_list = [
-    ('https://sport.tut.by/rubric/tennis/', Category.objects.get(pk=3)),
-    ('https://sport.tut.by/rubric/hockey/', Category.objects.get(pk=2)),
-    ('https://sport.tut.by/rubric/football/', Category.objects.get(pk=1)),
-]
+url_list = []
+qs = Category.objects.all()
+for item in qs:
+    if item.pars_url_tut:
+        url = Category.objects.get(pk=item.pk).pars_url_tut
+        cat = Category.objects.get(pk=item.pk)
+        url_list.append((url, cat))
+
 data = []
 for link in url_list:
     resp = requests.get(link[0], headers[randint(0, 2)])
-    # print(resp)
     if resp.status_code == 200:
         soup = BS(resp.content, 'html.parser')
         items = soup.find_all('div',
@@ -57,28 +58,28 @@ for link in url_list:
             soup = BS(resp.content, 'html.parser')
             item = soup.find('div', class_='col-w')
             if item:
-                title = item.find('h1', itemprop="headline").text
-                news['title'] = title
-                news['slug'] = from_cyrillic_to_eng(title)[:30]
-                div_cont = item.find('div', id="article_body")
-                content = ''
-                cont = div_cont.find_all('p')
-                for i in cont:
-                    content += i.text
-                news['content'] = content
-                # photo_div = div_cont.find('figure', class_="image-captioned")
-                try:
-                    photo = div_cont.find('img').get('src')
-                    path = os.path.join(BASE_DIR, 'media') + '\\' + basename(photo)
-                    with open(path, "wb") as f:
-                        f.write(requests.get(photo).content)
-                    news['photo'] = basename(photo)
-                except AttributeError:
-                    pass
+                title = item.find('h1', itemprop="headline")
+                # print(title)
+                if title:
+                    news['title'] = title.text
+                    news['slug'] = from_cyrillic_to_eng(title.text)[:50]
+                    div_cont = item.find('div', id="article_body")
+                    content = ''
+                    cont = div_cont.find_all('p')
+                    for i in cont:
+                        content += i.text
+                    news['content'] = content
+                    try:
+                        photo = div_cont.find('img').get('src')
+                        path = os.path.join(BASE_DIR, 'media') + '\\' + basename(photo)
+                        with open(path, "wb") as f:
+                            f.write(requests.get(photo).content)
+                        news['photo'] = basename(photo)
+                    except AttributeError:
+                        pass
         data.append(news)
 
 shuffle(data)
-
 
 for news in data:
     if news.get('tags'):
@@ -92,6 +93,5 @@ for news in data:
             print('News save', news.category)
         except DatabaseError:
             print('Error')
-
 
 print(datetime.now() - start)

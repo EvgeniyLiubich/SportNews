@@ -8,7 +8,9 @@ from django.dispatch import receiver
 class Category(models.Model):
     """Модель категорий"""
     title = models.CharField(max_length=150, db_index=True, verbose_name='Наименование категории')
-    slug = models.SlugField(max_length=150, verbose_name='Url', unique=True)
+    slug = models.SlugField(max_length=150, verbose_name='slug', unique=True)
+    pars_url_tut = models.TextField(blank=True, verbose_name='Url для парсинга TUT.BY')
+    pars_url_sports = models.TextField(blank=True, verbose_name='Url для парсинга SPORTS.RU')
 
     def get_absolute_url(self):
         return reverse('category', kwargs={'slug': self.slug, })
