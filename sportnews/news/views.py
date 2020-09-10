@@ -181,7 +181,7 @@ class CreateNews(CreateView):
 
 
 def send_email(request):
-    """Отправка сообщений"""
+    """Отправка сообщений. Реализована обратная связь. Те зарегистрированый пользователь может отправить сообщение с пожеланиями и предложениями администрации сайта"""
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
