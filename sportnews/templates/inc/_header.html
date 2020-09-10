@@ -1,19 +1,16 @@
 {% load menu %}
 <header class="header">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="logo">
-                            <h2><a href="{% url 'home' %} ">SportNews</a></h2>
-
-                        </div>
-                    </div>
-                    <div class="col-md-10">
-                        {% show_menu %}
-<!--                        <div class="menu">-->
-<!--                        <h2><a href="{% url 'send_email' %} ">Обратная связь</a></h2></div>-->
-                    </div>
-
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="logo">
+                    <h2><a href="{% url 'home' %} ">SportNews</a></h2>
                 </div>
             </div>
-        </header>
+            <div class="col-md-10">
+                {% show_menu %}
+            </div>
+
+        </div>
+    </div>
+</header>

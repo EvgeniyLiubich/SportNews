@@ -59,7 +59,6 @@ for link in url_list:
             item = soup.find('div', class_='col-w')
             if item:
                 title = item.find('h1', itemprop="headline")
-                # print(title)
                 if title:
                     news['title'] = title.text
                     news['slug'] = from_cyrillic_to_eng(title.text)[:50]

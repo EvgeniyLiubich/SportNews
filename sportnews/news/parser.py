@@ -29,7 +29,7 @@ headers = [{'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:47.0) Gecko/20100101 
            {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:53.0) Gecko/20100101 Firefox/53.0',
             'Accept': 'text/html, application/xhtml+xml, application/xml;q=0.9,*/*;q=0.8'}
            ]
-
+"""Парсер забирает со странички заголовок статьи, картинку, теги, связанные с этой статьей и затем сохраняет в модель новости эти теги, и сам контент"""
 """Для SPORTS.RU"""
 
 start = datetime.now()
@@ -45,7 +45,6 @@ for item in qs:
 data = []
 for link in url_list:
     resp = requests.get(link[0], headers[randint(0, 2)])
-    # print(resp)
     if resp.status_code == 200:
         soup = BS(resp.content, 'html.parser')
         items = soup.find_all('article',
@@ -60,7 +59,6 @@ for link in url_list:
             f.write(requests.get(photo).content)
         news['photo'] = basename(photo)
         news['category'] = link[1]
-        # print(news['category'])
         resp = requests.get(href, headers[randint(0, 2)])
         if resp.status_code == 200:
             soup = BS(resp.content, 'html.parser')
@@ -89,10 +87,11 @@ for link in url_list:
                         tag['slug'] = from_cyrillic_to_eng(tag['title'])
                         tag_item = Tag(**tag)
                         if Tag.objects.filter(slug=tag_item.slug):
-                            print('Tag exist')
+                            pass
+                            # print('Tag exist')
                         else:
                             tag_item.save()
-                            print('Tag save')
+                            # print('Tag save')
                         teg_1 = Tag.objects.get(slug=tag_item.slug)
                         news['tags'].append(teg_1.id)
 
